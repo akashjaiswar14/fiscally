@@ -2,10 +2,7 @@ package in.akash.fiscally.services;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
 import in.akash.fiscally.dto.CategoryDTO;
 import in.akash.fiscally.entity.CategoryEntity;
 import in.akash.fiscally.entity.ProfileEntity;
