@@ -13,16 +13,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ExpenseDTO {
+public class RecentTransactionDTO {
 
     private Long id;
-    private String name;
+    private Long profileId;
     private String icon;
-    private String categoryName;
-    private Long categoryId;
+    private String name;
     private BigDecimal amount;
     private LocalDate date;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    private String type;
 }
