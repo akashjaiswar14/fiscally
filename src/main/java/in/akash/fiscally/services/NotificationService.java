@@ -51,7 +51,7 @@ public class NotificationService {
             if(!todaysExpenses.isEmpty()){
                 StringBuilder table = new StringBuilder();
                 table.append("<table style='border-collapse:collapse;width:100%;'>");
-                table.append("<tr style='background-color:#f2f2f2;'><th style='border:1px solid #ddd;padding:8px'>S.No</th><th style='border:1px solid #ddd;padding:8px;'>Name</th><th style='border:1px solid #ddd;padding:8px;'>Amount</th><th style='border:1px solid #ddd;padding:8px;'>Category</th><th style='border:1px solid #ddd;padding:8px;'>Date</th></tr>");
+                table.append("<tr style='background-color:#f2f2f2;'><th style='border:1px solid #ddd;padding:8px'>S.No</th><th style='border:1px solid #ddd;padding:8px;'>Name</th><th style='border:1px solid #ddd;padding:8px;'>Amount</th><th style='border:1px solid #ddd;padding:8px;'>Category</th></tr>");
                 int i = 1;
                 for(ExpenseDTO expenseDTO : todaysExpenses){
                     table.append("<tr>");

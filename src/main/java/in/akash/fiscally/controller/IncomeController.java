@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import in.akash.fiscally.dto.ExpenseDTO;
 import in.akash.fiscally.dto.IncomeDTO;
 import in.akash.fiscally.services.IncomeService;
 import lombok.RequiredArgsConstructor;
