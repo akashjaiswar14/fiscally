@@ -29,26 +29,54 @@ public class ProfileService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    @Value("${app.activation.url}")
+    @Value("${FISCALLY_BACKEND_URL}")
     private String activationURL;
 
-    public ProfileDTO registerProfile(ProfileDTO profileDTO){
+    // public ProfileDTO registerProfile(ProfileDTO profileDTO){
 
-        ProfileEntity newProfile = toEntity(profileDTO);
-        newProfile.setActivationToken(UUID.randomUUID().toString());
-        newProfile = profileRepository.save(newProfile);
+    //     ProfileEntity newProfile = toEntity(profileDTO);
+    //     newProfile.setActivationToken(UUID.randomUUID().toString());
+    //     newProfile = profileRepository.save(newProfile);
 
-        //send activation email
-        String activationLink = activationURL+"api/v1.0/activate?token="+newProfile.getActivationToken();
-        String subject = "Activate your fiscally account";
-        String body = "click on the following link to activate your account:"+activationLink;
-        try {
-            emailService.sendEmail(newProfile.getEmail(), subject, body);
-        } catch (Exception e) {
-            System.err.println("Failed to send welcome email: " + e.getMessage());
-        }
-        return toDTO(newProfile);
+    //     //send activation email
+    //     String activationLink = activationURL+"api/v1.0/activate?token="+newProfile.getActivationToken();
+    //     String subject = "Activate your fiscally account";
+    //     String body = "click on the following link to activate your account:"+activationLink;
+    //     try {
+    //         emailService.sendEmail(newProfile.getEmail(), subject, body);
+    //     } catch (Exception e) {
+    //         System.err.println("Failed to send welcome email: " + e.getMessage());
+    //     }
+    //     return toDTO(newProfile);
+    // }
+
+    public ProfileDTO registerProfile(ProfileDTO profileDTO) {
+
+    // 1. ADD THIS CHECK HERE 👇 (This prevents the ugly SQL error logs)
+    if (profileRepository.findByEmail(profileDTO.getEmail()).isPresent()) {
+        throw new RuntimeException("Email already exists. Please login.");
     }
+
+    ProfileEntity newProfile = toEntity(profileDTO);
+    newProfile.setActivationToken(UUID.randomUUID().toString());
+    
+    // 2. Save the user (This is already correct in your code)
+    newProfile = profileRepository.save(newProfile);
+
+    // 3. Send Email (Your try-catch block is already perfect here)
+    String activationLink = activationURL + "api/v1.0/activate?token=" + newProfile.getActivationToken();
+    String subject = "Activate your fiscally account";
+    String body = "Click on the following link to activate your account: " + activationLink;
+    
+    try {
+        emailService.sendEmail(newProfile.getEmail(), subject, body);
+    } catch (Exception e) {
+        // This ensures the API returns Success even if email fails
+        System.err.println("⚠️ Failed to send welcome email: " + e.getMessage());
+    }
+
+    return toDTO(newProfile);
+}
 
     public ProfileEntity toEntity(ProfileDTO profileDTO){
         return ProfileEntity.builder()
