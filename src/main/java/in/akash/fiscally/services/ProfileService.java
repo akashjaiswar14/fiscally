@@ -42,7 +42,11 @@ public class ProfileService {
         String activationLink = activationURL+"api/v1.0/activate?token="+newProfile.getActivationToken();
         String subject = "Activate your fiscally account";
         String body = "click on the following link to activate your account:"+activationLink;
-        emailService.sendEmail(newProfile.getEmail(), subject, body);
+        try {
+            emailService.sendEmail(newProfile.getEmail(), subject, body);
+        } catch (Exception e) {
+            System.err.println("Failed to send welcome email: " + e.getMessage());
+        }
         return toDTO(newProfile);
     }
 
