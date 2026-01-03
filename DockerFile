@@ -1,0 +1,5 @@
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY target/fiscally-0.0.1-SNAPSHOT.jar fiscally-v1.0.jar
+EXPOSE 9090
+ENTRYPOINT [ "java","-jar","fiscally-v1.0.jar" ]
