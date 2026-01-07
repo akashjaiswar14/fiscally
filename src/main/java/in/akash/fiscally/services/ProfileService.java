@@ -29,7 +29,7 @@ public class ProfileService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    @Value("${FISCALLY_BACKEND_URL}")
+    @Value("${app.activation.url}")
     private String activationURL;
 
     // public ProfileDTO registerProfile(ProfileDTO profileDTO){
@@ -62,7 +62,7 @@ public class ProfileService {
             newProfile = profileRepository.save(newProfile);
 
             String activationLink =
-                    activationURL + "/activate?token=" + newProfile.getActivationToken();
+                    activationURL + "/api/v1.0/activate?token=" + newProfile.getActivationToken();
 
             String subject = "Activate your Fiscally account";
             String body = "Click the link to activate your account:\n" + activationLink;
