@@ -3,6 +3,7 @@ package in.akash.fiscally.services;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
@@ -13,11 +14,11 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.properties.mail.smtp.from}")
+    @Value("${spring.mail.from}")
     private String fromMail;
 
-    public void sendEmail(String to, String subject, String body){
-
+    @Async
+    public void sendEmail(String to, String subject, String body) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromMail);
@@ -28,7 +29,9 @@ public class EmailService {
             mailSender.send(message);
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            // LOG IT, DON'T THROW
+            System.err.println("❌ Email failed to send to " + to);
+            e.printStackTrace();
         }
     }
 }
