@@ -1,13 +1,63 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import Input from '../components/Input';
+import { HandHelping, LoaderCircle } from 'lucide-react';
+import AxiosConfig from '../util/AxiosConfig';
+import { API_ENDPOINTS } from '../util/apiEndPoints';
+import AppContext from '../context/AppContext';
 
 const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const {setUser} = useContext(AppContext);
+
+  const handleSubmit = async(e)=>{
+    e.preventDefault();
+    setIsLoading(true);
+
+      if(!validateEmail(email)){
+          setError("Please enter your valid email address");
+          setIsLoading(false);
+          return;
+        }
+    
+        if(!password.trim()){
+          setError("Please enter your password");
+          setIsLoading(false);
+          return;
+        }
+
+        setError("");
+
+        // Login api call
+        try {
+          const response  = await AxiosConfig.post(API_ENDPOINTS.LOGIN, {
+            email,
+            password
+          })
+          const {token, user} = response.data;
+          if(token){
+            localStorage.setItem("token", token);
+            setUser(user);
+            navigate("/dashbaord");
+          }
+        } catch (error) {
+          if(error.response && error.response.data.message){
+            setError(error.response.data.message);
+          }
+          else{
+            console.error("Something went wrong", error);
+            setError(error.message);
+          }
+          
+        } finally{
+          isLoading(false);
+        }
+  }
 
   const navigate = useNavigate();
   return (
@@ -24,7 +74,7 @@ const Login = () => {
             Please enter your details to login.
           </p>
 
-          <form className='space-y-4'>
+          <form onSubmit={handleSubmit} className='space-y-4'>
 
             <Input 
               value={email}
@@ -48,8 +98,13 @@ const Login = () => {
               </p>
             )}
 
-            <button className='btn-primary w-full py-3 text-lg font-medium bg-purple-900 rounded-3xl text-white hover:bg-purple-700' type='submit'>
-              Login
+            <button disabled={isLoading} className={`btn-primary w-full py-3 text-lg font-medium flex items-center justify-center gap-2 ${isLoading ? 'opacity-60 cursor-not-allowed': ''} bg-purple-900 rounded-3xl text-white hover:bg-purple-700`} type='submit'>
+              {isLoading ? (
+                <>  
+                  <LoaderCircle className='animate-spin w-5 h-5' />
+                  Logging in...
+                </>
+              ) : ("LOGIN")}
             </button>
 
             <p className='text-sm text-slate-800 text-center mt-6'>
