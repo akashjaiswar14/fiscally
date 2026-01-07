@@ -19,6 +19,11 @@ public class EmailService {
 
     @Async
     public void sendEmail(String to, String subject, String body) {
+
+        System.out.println("🔥 EMAIL METHOD ENTERED");
+        System.out.println("FROM: " + fromMail);
+        System.out.println("TO: " + to);
+
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromMail);
@@ -28,10 +33,12 @@ public class EmailService {
 
             mailSender.send(message);
 
+            System.out.println("✅ MAIL SENDER.SEND() CALLED");
+
         } catch (Exception e) {
-            // LOG IT, DON'T THROW
-            System.err.println("❌ Email failed to send to " + to);
+            System.err.println("❌ EMAIL SEND FAILED");
             e.printStackTrace();
         }
     }
+
 }
