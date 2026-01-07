@@ -1,44 +1,103 @@
+// package in.akash.fiscally.services;
+
+// import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.mail.SimpleMailMessage;
+// import org.springframework.mail.javamail.JavaMailSender;
+// import org.springframework.scheduling.annotation.Async;
+// import org.springframework.stereotype.Service;
+// import lombok.RequiredArgsConstructor;
+
+// @Service
+// @RequiredArgsConstructor
+
+// public class EmailService {
+
+//     private final JavaMailSender mailSender;
+
+//     @Value("${spring.mail.from}")
+//     private String fromMail;
+
+//     @Async
+//     public void sendEmail(String to, String subject, String body) {
+
+//         System.out.println("🔥 EMAIL METHOD ENTERED");
+//         System.out.println("FROM: " + fromMail);
+//         System.out.println("TO: " + to);
+
+//         try {
+//             SimpleMailMessage message = new SimpleMailMessage();
+//             message.setFrom(fromMail);
+//             message.setTo(to);
+//             message.setSubject(subject);
+//             message.setText(body);
+
+//             mailSender.send(message);
+
+//             System.out.println("✅ MAIL SENDER.SEND() CALLED");
+
+//         } catch (Exception e) {
+//             System.err.println("❌ EMAIL SEND FAILED");
+//             e.printStackTrace();
+//         }
+//     }
+
+// }
+
 package in.akash.fiscally.services;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
 
 @Service
-@RequiredArgsConstructor
-
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private static final String BREVO_URL =
+            "https://api.brevo.com/v3/smtp/email";
 
-    @Value("${spring.mail.from}")
-    private String fromMail;
+    @Value("${BREVO_API_KEY}")
+    private String apiKey;
 
     @Async
     public void sendEmail(String to, String subject, String body) {
-
-        System.out.println("🔥 EMAIL METHOD ENTERED");
-        System.out.println("FROM: " + fromMail);
-        System.out.println("TO: " + to);
-
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(fromMail);
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(body);
+            RestTemplate restTemplate = new RestTemplate();
 
-            mailSender.send(message);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("api-key", apiKey);
 
-            System.out.println("✅ MAIL SENDER.SEND() CALLED");
+            Map<String, Object> payload = Map.of(
+                "sender", Map.of(
+                    "email", "akash9015jaiswar@gmail.com",
+                    "name", "Fiscally"
+                ),
+                "to", new Object[]{
+                    Map.of("email", to)
+                },
+                "subject", subject,
+                "textContent", body
+            );
+
+            HttpEntity<Map<String, Object>> request =
+                    new HttpEntity<>(payload, headers);
+
+            restTemplate.postForEntity(
+                    BREVO_URL,
+                    request,
+                    String.class
+            );
+
+            System.out.println("✅ BREVO API EMAIL SENT TO: " + to);
 
         } catch (Exception e) {
-            System.err.println("❌ EMAIL SEND FAILED");
+            System.err.println("❌ BREVO API EMAIL FAILED");
             e.printStackTrace();
         }
     }
-
 }
+
