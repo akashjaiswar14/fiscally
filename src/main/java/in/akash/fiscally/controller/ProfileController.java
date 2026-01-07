@@ -22,11 +22,16 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping("/register")
-    public ResponseEntity<ProfileDTO> registerProfile(@RequestBody ProfileDTO profileDTO){
-
-        ProfileDTO registerProfile = profileService.registerProfile(profileDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(registerProfile);
-    }
+        public ResponseEntity<?> registerProfile(@RequestBody ProfileDTO profileDTO) {
+            try {
+                ProfileDTO registerProfile = profileService.registerProfile(profileDTO);
+                return ResponseEntity.status(HttpStatus.CREATED).body(registerProfile);
+            } catch (Exception e) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("message", e.getMessage()));
+            }
+        }
 
     @GetMapping("/activate")
     public ResponseEntity<String> activateProfile(@RequestParam String token){
