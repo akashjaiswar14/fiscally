@@ -2,7 +2,7 @@ import { API_ENDPOINTS } from "./apiEndPoints";
 
 const CLOUDINARY_UPLOAD_PRESET = "fiscally";
 
-const uploadProfileImage = async (image)=>{
+export const uploadProfileImage = async (image)=>{
     const formData = new FormData();
     formData.append("file", image);
     formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);

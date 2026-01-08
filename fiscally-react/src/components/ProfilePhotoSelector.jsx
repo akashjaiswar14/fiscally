@@ -15,12 +15,14 @@ const ProfilePhotoSelector = ({image, setImage}) => {
         }
     }
 
-    const handlRemoveImage = ()=>{
+    const handlRemoveImage = (e)=>{
+        e.preventDefault();
         setImage(null);
         setPreviewURL(null);
     }
 
-    const onChooseFile = ()=>{
+    const onChooseFile = (e)=>{
+        e.preventDefault();
         inputRef.current?.click();  
     }
     return (
@@ -34,12 +36,14 @@ const ProfilePhotoSelector = ({image, setImage}) => {
             />
 
             {!image ?(
-                <div className='w-20 h-20 flex items-center justify-center bg-purple-100 rounded-full relative'>
-                    <User className="text-purple-500 size={35}"/>
-                    <button 
+                <div className="w-20 h-20 flex items-center justify-center bg-purple-100 rounded-full relative">
+                    <User size={35} className="text-purple-500" />
+                    <button
                     onClick={onChooseFile}
-                    className='w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full absolute -bottom-1 -right-1'></button>
-                    <Upload size={15} className='text-purple-500'/>
+                    className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full absolute -bottom-0.5 -right-1"
+                    >
+                    <Upload size={15} className="text-purple-500" />
+                    </button>
                 </div>
             ):(
                 <div className='relative'>

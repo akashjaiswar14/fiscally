@@ -8,6 +8,7 @@ import { API_ENDPOINTS } from '../util/apiEndPoints';
 import toast from 'react-hot-toast';
 import { LoaderCircle } from 'lucide-react';
 import ProfilePhotoSelector from '../components/ProfilePhotoSelector';
+import uploadProfileImage from '../util/uploadProfileImage';
 
 const Signup = () => {
 
@@ -22,6 +23,7 @@ const Signup = () => {
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
+    let profileImageUrl = "";
     setIsLoading(true);
     
     // basic validation
@@ -47,10 +49,16 @@ const Signup = () => {
 
     // signup api call
     try {
+      // upload image if present
+      if(profilePhoto){
+        const imageUrl = await uploadProfileImage(profilePhoto);
+        profileImageUrl = imageUrl || "";
+      }
       const response = await AxiosConfig.post(API_ENDPOINTS.REGISTER, {
         fullName,
         email,
-        password
+        password,
+        profileImageUrl
       })
       if(response.status === 201){
         toast.success("Profile created successfully.")

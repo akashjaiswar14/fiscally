@@ -5,7 +5,8 @@ import Input from '../components/Input';
 import { HandHelping, LoaderCircle } from 'lucide-react';
 import AxiosConfig from '../util/AxiosConfig';
 import { API_ENDPOINTS } from '../util/apiEndPoints';
-import AppContext from '../context/AppContext';
+import { AppContext } from "../context/AppContext";
+import { validateEmail } from '../util/validation';
 
 const Login = () => {
 
@@ -43,7 +44,7 @@ const Login = () => {
           if(token){
             localStorage.setItem("token", token);
             setUser(user);
-            navigate("/dashbaord");
+            navigate("/dashboard");
           }
         } catch (error) {
           if(error.response && error.response.data.message){
@@ -55,7 +56,7 @@ const Login = () => {
           }
           
         } finally{
-          isLoading(false);
+          setIsLoading(false);
         }
   }
 
