@@ -1,8 +1,9 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import { AppContext } from "../context/AppContext";
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Menu, User, X } from 'lucide-react';
 import { assets } from '../assets/assets';
+import Sidebar from './Sidebar';
 
 const MenuBar = () => {
     const [openSideMenu, setOpenSideMenu] = useState(false);
@@ -18,12 +19,33 @@ const MenuBar = () => {
         navigate("/login");
     }
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if(dropDownRef.current && !dropDownRef.current.contains(event.target)){
+                setOpenSideMenu(false)
+            }
+            if(showDropDown){
+                document.addEventListener("mousedown", handleClickOutside);
+            }
+            return ()=>{
+                document.removeEventListener("mousedown", handleClickOutside);
+            }
+            if (window.innerWidth >= 1024) {
+            // lg breakpoint
+            setOpenSideMenu(false);
+            }
+        };
+    }, [showDropDown]);
+
     return (
         <div className='flex items-center justify-between gap-5 bg-white border border-b border-gray-200/50 backdrop-blur-[2px] py-4 px-4 sm:px-7 sticky top-0 z-30'>
             {/* left side menu button and title */}
             <div className='flex items-center gap-5'>
                 <button 
-                onClick={()=> setOpenSideMenu(!openSideMenu)}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenSideMenu(prev => !prev);
+                }}
                 className='block lg:hidden text-block hover:bg-gray-100 p-1 rounded transition-colors'>
                 {openSideMenu ? (
                     <X className='text-2xl'/>
@@ -81,7 +103,15 @@ const MenuBar = () => {
             </div>
 
             {/* mobile side menu */}
-            <span>mobile view</span>
+            <div
+                className={`fixed top-15.25 left-0 w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200 z-40 lg:hidden
+                    transition-transform duration-300 ease-in-out
+                    ${openSideMenu ? "translate-x-0" : "-translate-x-full"}
+                `}
+                onClick={(e) => e.stopPropagation()}
+                >
+                {user && <Sidebar />}
+            </div>
         </div>
     )
 }
