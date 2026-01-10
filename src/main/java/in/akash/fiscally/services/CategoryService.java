@@ -70,6 +70,7 @@ public class CategoryService {
                         .orElseThrow(()-> new RuntimeException("Category not found"));
         existingCategory.setName(dto.getName());
         existingCategory.setIcon(dto.getIcon());
+        existingCategory.setType(dto.getType());
 
         categoryRepository.save(existingCategory);
         return toDTO(existingCategory);

@@ -40,10 +40,20 @@ const Category = () => {
   },[]);
 
   const handleAddCategory = async (category)=> {
-    const {name,type, icon} = category;
+    const {id, name,type, icon} = category;
 
     if(!name.trim()){
       toast.error("Category name is required");
+      return;
+    }
+
+    // check if the category already exist
+    const isDublicate = categoryData.some((category) => {
+      return category.name.toLowerCase() === name.trim().toLowerCase();
+    })
+    
+    if(isDublicate){
+      toast.error("Category name is already exist");
       return;
     }
 
@@ -61,6 +71,36 @@ const Category = () => {
     
   }
 
+  const handleEditCategory = (categoryToEdit)=>{
+    console.log("Editing the category", categoryToEdit);
+    setSelectedCategory(categoryToEdit);
+    setOpenEditCategoryModel(true);
+    
+  }
+
+  const handleUpdateCategory = async (updatedCategory)=>{
+    console.log("updating the category", updatedCategory);
+    const {id, name, type, icon} = updatedCategory;
+    if(!name.trim()){
+      toast.error("Category name is required");
+      return;
+    }
+    if(!id){
+      toast.error("Category id is  missing for update");
+      return;
+    }
+    try {
+      await AxiosConfig.put(API_ENDPOINTS.UPDATE_CATEGORY(id), {name, type, icon});
+      setOpenEditCategoryModel(false);
+      setSelectedCategory(null);
+      toast.success("Category updated successfully");
+      fetchCategoryDetails();
+    } catch (error) {
+      console.error("Error updating category: ",error.response?.data?.message || error.message);
+      toast.error(error.response?.data?.message || "Failed to update category");
+    }
+    
+  }
   return (
     <Dashboard >
       <div className='my-5 mx-auto'>
@@ -76,7 +116,7 @@ const Category = () => {
 
         </div>
         {/* Category list */}
-        <CategoryList categories={categoryData}/>
+        <CategoryList categories={categoryData} onEditCategory={handleEditCategory}/>
         {/* Adding category model */}
         <Model
           isOpen={openAddCategoryModel}
@@ -87,7 +127,20 @@ const Category = () => {
         </Model>
 
         {/* updating category model */}
-
+        <Model
+          onClose={()=> {
+            setOpenEditCategoryModel(false);
+            setSelectedCategory(null);
+          }}
+          isOpen={openEditCategoryModel}
+          title="Update Category"
+        >
+          <AddCategoryForm
+            initialCategoryData={selectedCategory}
+            onAddCategory={handleUpdateCategory}
+            isEditing={true}
+          />
+        </Model>
       </div>
     </Dashboard>
   )
