@@ -70,7 +70,7 @@ const AddCategoryForm = ({onAddCategory, initialCategoryData =null, isEditing=fa
                     type='button'
                     onClick={handleSubmit}
                     disabled={loading}
-                    className='add-btn add-btn-fill'
+                    className='add-btn add-btn-fill bg-purple-500 p-2 rounded-2xl text-white hover:bg-purple-400 cursor-pointer border border-purple-800'
                 >
                     {loading ? (
                         <>

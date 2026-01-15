@@ -15,7 +15,50 @@ export const addThousandsSeparator = (num) => {
         integerPart = formattedOtherNumbers + ',' + lastThree;
     } else{
         integerPart = lastThree;
-    }
+    }   
 
     return fractionalPart ? `${integerPart}.${fractionalPart}` : integerPart;
 }
+
+export const prepareIncomeLineChartData = (transactions = []) => {
+    if (!Array.isArray(transactions)) return [];
+
+    const incomeByDate = {};
+
+    transactions.forEach(({ date, amount }) => {
+        if (!date || !amount) return;
+
+        const day = date.split('T')[0]; // normalize date
+
+        incomeByDate[day] = (incomeByDate[day] || 0) + Number(amount);
+    });
+
+    return Object.keys(incomeByDate)
+        .sort((a, b) => new Date(a) - new Date(b))
+        .map(date => ({
+            date,
+            total: incomeByDate[date]
+        }));
+};
+
+export const prepareExpenseLineChartData = (transactions = []) => {
+    if (!Array.isArray(transactions)) return [];
+
+    const expenseByDate = {};
+
+    transactions.forEach(({ date, amount }) => {
+        if (!date || !amount) return;
+
+        const day = date.split('T')[0]; // normalize date
+
+        expenseByDate[day] = (expenseByDate[day] || 0) + Number(amount);
+    });
+
+    return Object.keys(expenseByDate)
+        .sort((a, b) => new Date(a) - new Date(b))
+        .map(date => ({
+            date,
+            total: expenseByDate[date]
+        }));
+};
+

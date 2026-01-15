@@ -9,6 +9,7 @@ import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import Filter from './pages/Filter.jsx'
 import { AppContext } from './context/AppContext.jsx';
+import HomePage from './pages/HomePage.jsx';
 
 
 const App = () => {
@@ -23,7 +24,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Root />}/>
-          <Route path="/dashboard" element={<Home />} />
+          <Route path="/dashboard" element={<HomePage />} />
           <Route path="/income" element={<Income />} />
           <Route path="/expense" element={<Expense />} />
           <Route path="/category" element={<Category />} />
@@ -48,3 +49,4 @@ const Root = ()=>{
 }
 
 export default App
+

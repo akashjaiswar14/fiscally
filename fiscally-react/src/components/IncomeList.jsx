@@ -49,27 +49,70 @@
 
 // export default IncomeList
 
-import { Download, Mail } from 'lucide-react'
-import React from 'react'
+import { Download, LoaderCircle, Mail } from 'lucide-react'
+import React, { useState } from 'react'
 import TransactionInfoCard from './TransactionInfoCard'
 import moment from 'moment'
 
-const IncomeList = ({ transaction, onDelete }) => {
+const IncomeList = ({ transaction, onDelete, onDownload, onEmail }) => {
     console.log("IncomeList transaction:", transaction);
+    const [loading, setLoading] = useState(false);
+    
+    const handleEmail = async () =>{
+        setLoading(true);
+        try {
+            await onEmail();
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleDownload = async () => {
+        setLoading(true);
+        try {
+            await onDownload();
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
         <div className='card bg-green-50 p-3 rounded-2xl'>
         <div className='flex items-center justify-between'>
             <h5 className='text-lg'>Income Sources</h5>
 
             <div className='flex items-center justify-end gap-5'>
-            <button className='flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 border border-purple-200 rounded-full shadow-sm hover:bg-blue-100 transition'>
-                <Mail size={16} />
-                <span className='text-sm font-medium'>Email</span>
+            <button 
+                onClick={handleEmail}
+                disabled={loading}
+                className='flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 border border-purple-200 rounded-full shadow-sm hover:bg-blue-100 transition'>
+                {loading ? (
+                    <>
+                        <LoaderCircle className='w-4 h-4 animate-spin'/>
+                        <span className='text-sm font-medium'>Emailing...</span>
+                    </>
+                ) : (
+                    <>
+                        <Mail size={16} />
+                        <span className='text-sm font-medium'>Email</span>
+                    </>
+                )}
             </button>
 
-            <button className='flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 border border-purple-200 rounded-full shadow-sm hover:bg-blue-100 transition'>
-                <Download size={16} />
-                <span className='text-sm font-medium'>Download</span>
+            <button 
+                onClick={handleDownload}
+                disabled={loading}
+                className='flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 border border-purple-200 rounded-full shadow-sm hover:bg-blue-100 transition'>
+                {loading ? (
+                    <>
+                        <LoaderCircle className='w-4 h-4 animate-spin'/>
+                        <span className='text-sm font-medium'>Downloading...</span>
+                    </>
+                ) : (
+                    <>
+                        <Download size={16} />
+                        <span className='text-sm font-medium'>Download</span>
+                    </>
+                )}
             </button>
             </div>
         </div>
@@ -84,7 +127,7 @@ const IncomeList = ({ transaction, onDelete }) => {
                 date={moment(income.date).format('Do MMM YYYY')}
                 amount={income.amount}
                 type="income"                       // ✅ FIXED
-                onClick={() => onDelete(income.id)}
+                onDelete={() => onDelete(income.id)}
                 />
             ))
             ) : (
