@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import in.akash.fiscally.dto.IncomeDTO;
 import in.akash.fiscally.entity.CategoryEntity;
@@ -55,6 +56,7 @@ public class IncomeService {
     }
 
     // get latest 5 incomes for current user
+    @Transactional(readOnly = true)
     public List<IncomeDTO> getLatest5IncomeForCurrentUser(){
         ProfileEntity profile = profileService.getCurrentProfile();
         List<IncomeEntity> list = incomeRepository.findTop5ByProfile_IdOrderByDateDesc(profile.getId());

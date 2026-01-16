@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import in.akash.fiscally.dto.ExpenseDTO;
 import in.akash.fiscally.entity.CategoryEntity;
@@ -34,6 +35,7 @@ public class ExpenseService {
     }
 
     // retrieves all expenses for the current month and based in custom date 
+    @Transactional(readOnly = true)
     public List<ExpenseDTO> getCurrentMonthExpenseForCurrentUser(){
         ProfileEntity profile = profileService.getCurrentProfile();
         LocalDate now = LocalDate.now();
@@ -55,6 +57,7 @@ public class ExpenseService {
     }
 
     // get latest 5 expenses for current user
+    @Transactional(readOnly = true)
     public List<ExpenseDTO> getLatest5ExpensesForCurrentUser(){
         ProfileEntity profile = profileService.getCurrentProfile();
         List<ExpenseEntity> list = expenseRepository.findTop5ByProfileIdOrderByDateDesc(profile.getId());
@@ -62,6 +65,7 @@ public class ExpenseService {
     }
 
     // get total expense for current user
+    // @Transactional(readOnly = true)
     public BigDecimal getTotalExpenseForCurrentUser(){
         ProfileEntity profile = profileService.getCurrentProfile();
         BigDecimal total = expenseRepository.findTotalExpenseByProfileId(profile.getId());
@@ -69,6 +73,7 @@ public class ExpenseService {
     }
 
     // filter expenses
+    @Transactional(readOnly = true)
     public List<ExpenseDTO> filterExpense(LocalDate startDate, LocalDate endDate, String keyword, Sort sort){
         ProfileEntity profile = profileService.getCurrentProfile();
         List<ExpenseEntity> list = expenseRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(profile.getId(), startDate, endDate, keyword, sort);
@@ -76,6 +81,7 @@ public class ExpenseService {
     }
 
     // notification
+    @Transactional(readOnly = true)
     public List<ExpenseDTO> getExpensesForUserOnDate(Long profileId, LocalDate date){
         List<ExpenseEntity> list = expenseRepository.findByProfileIdAndDate(profileId, date);
         return list.stream().map(this::toDTO).toList();
