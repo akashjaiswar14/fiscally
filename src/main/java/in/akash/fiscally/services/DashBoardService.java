@@ -13,6 +13,8 @@ import in.akash.fiscally.dto.IncomeDTO;
 import in.akash.fiscally.dto.RecentTransactionDTO;
 import in.akash.fiscally.entity.ProfileEntity;
 import lombok.RequiredArgsConstructor;
+import java.math.BigDecimal;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class DashBoardService {
         ProfileEntity profile = profileService.getCurrentProfile();
         Map<String, Object> returnValue = new LinkedHashMap<>();
         List<IncomeDTO> latestIncome = incomeService.getLatest5IncomeForCurrentUser();
-        List<ExpenseDTO> latestExpense = expenseService.getCurrentMonthExpenseForCurrentUser();
+        List<ExpenseDTO> latestExpense = expenseService.getLatest5ExpensesForCurrentUser();
         List<RecentTransactionDTO> recentTransactions = concat(
                 latestIncome.stream().map(income -> RecentTransactionDTO.builder()
                         .id(income.getId())
@@ -60,11 +62,19 @@ public class DashBoardService {
         })
         .collect(Collectors.toList());
 
-        returnValue.put("totalBalance", incomeService.getTotalIncomeForCurrentUser()
-                                                    .subtract(expenseService.getTotalExpenseForCurrentUser()));
-        
-        returnValue.put("totalIncome", incomeService.getTotalIncomeForCurrentUser());
-        returnValue.put("totalExpense", expenseService.getTotalExpenseForCurrentUser());
+        BigDecimal totalIncome =
+        incomeService.getTotalIncomeForCurrentUser() != null
+                ? incomeService.getTotalIncomeForCurrentUser()
+                : BigDecimal.ZERO;
+
+        BigDecimal totalExpense =
+                expenseService.getTotalExpenseForCurrentUser() != null
+                        ? expenseService.getTotalExpenseForCurrentUser()
+                        : BigDecimal.ZERO;
+
+        returnValue.put("totalIncome", totalIncome);
+        returnValue.put("totalExpense", totalExpense);
+        returnValue.put("totalBalance", totalIncome.subtract(totalExpense));
         returnValue.put("recent5Expenses", latestExpense);
         returnValue.put("recent5Income", latestIncome);
         returnValue.put("recentTransaction", recentTransactions);
