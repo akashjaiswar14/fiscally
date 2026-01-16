@@ -26,7 +26,7 @@ public class DownloadService {
             ProfileEntity profile = profileService.getCurrentProfile();
 
             List<IncomeEntity> incomes =
-                incomeRepository.findByProfileIdOrderByDateDesc(profile.getId());
+                incomeRepository.findByProfile_IdOrderByDateDesc(profile.getId());
 
             Workbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("Income");

@@ -14,16 +14,16 @@ import in.akash.fiscally.entity.IncomeEntity;
 public interface IncomeRepository extends JpaRepository<IncomeEntity, Long>{
 
     // select * from tbl_income where profile_id = ?1 order by date desc
-    List<IncomeEntity> findByProfileIdOrderByDateDesc(Long profileId);
+    List<IncomeEntity> findByProfile_IdOrderByDateDesc(Long profileId);
 
     // select * from tbl_income where profile_id = ?1 order by date desc limit 5
-    List<IncomeEntity> findTop5ByProfileIdOrderByDateDesc(Long profileId);
+    List<IncomeEntity> findTop5ByProfile_IdOrderByDateDesc(Long profileId);
 
     @Query("SELECT SUM(e.amount) From IncomeEntity e WHERE e.profile.id = :profileId")
-    BigDecimal findTotalExpenseByProfileId(@Param("profileId") Long profileId);
+    BigDecimal findTotalIncomeByProfile_Id(@Param("profileId") Long profileId);
 
     // @Query("SELECT * FROM tbl_income WHERE profile_id = ?1 AND DATE BETWEEN ?2 AND ?3 AND name LIKE %?4%")
-    List<IncomeEntity> findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(
+    List<IncomeEntity> findByProfile_IdAndDateBetweenAndNameContainingIgnoreCase(
         Long profileId,
         LocalDate startDate,
         LocalDate endDate,

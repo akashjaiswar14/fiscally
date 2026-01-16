@@ -30,7 +30,7 @@ public class EmailAttachService {
             ProfileEntity profile = profileService.getCurrentProfile();
 
             List<IncomeEntity> incomes =
-                incomeRepository.findByProfileIdOrderByDateDesc(profile.getId());
+                incomeRepository.findByProfile_IdOrderByDateDesc(profile.getId());
 
             // 1️⃣ Create Excel in memory
             byte[] excelBytes = generateExcel(incomes);
