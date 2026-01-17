@@ -26,14 +26,6 @@ public class JwtUtil {
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
 
-    // ============================================================
-    // 1. GENERATE TOKEN METHODS
-    // ============================================================
-
-    /**
-     * Generate token for the currently logged-in user (No arguments needed).
-     * WARNING: Only works if the user is already authenticated.
-     */
     public String generateToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -42,37 +34,22 @@ public class JwtUtil {
         return generateToken(authentication.getName()); // usually returns the username/email
     }
 
-    /**
-     * Generate token using a UserDetails object (Standard Spring Security way)
-     */
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails.getUsername());
     }
 
-    /**
-     * Generate token using just the Email string (Custom way)
-     */
     public String generateToken(String email) {
         return generateToken(new HashMap<>(), email);
     }
 
-    /**
-     * Generate token with Extra Claims (e.g., Roles, ID) + UserDetails
-     */
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return generateToken(extraClaims, userDetails.getUsername());
     }
 
-    /**
-     * Core Method: Generate token with Extra Claims + Email String
-     */
     public String generateToken(Map<String, Object> extraClaims, String subject) {
         return buildToken(extraClaims, subject, jwtExpiration);
     }
 
-    // ============================================================
-    // 2. TOKEN BUILDING LOGIC (Private)
-    // ============================================================
 
     private String buildToken(Map<String, Object> extraClaims, String subject, long expiration) {
         return Jwts.builder()
